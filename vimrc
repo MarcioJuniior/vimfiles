@@ -17,6 +17,7 @@ Plug 'luochen1990/rainbow'
 Plug 'mhinz/vim-startify'
 Plug 'airblade/vim-gitgutter'
 Plug 'easymotion/vim-easymotion'
+Plug 'joshdick/onedark.vim'
 
 " Commands
 Plug 'scrooloose/nerdcommenter'
@@ -25,6 +26,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-abolish'
 Plug 'skwp/greplace.vim'
 Plug 'gorkunov/smartpairs.vim'
+Plug 'mileszs/ack.vim'
 
 " Automatic Helpers
 Plug 'Raimondi/delimitMate'
@@ -97,55 +99,17 @@ call plug#end()
 " Automatically detect file types. (must turn on after Vundle)
 filetype plugin indent on
 
-" turn on syntax highlighting
+" Syntax highlighting preferences
+set termguicolors
 syntax on
-
-if has('gui_running')
-  set guioptions=egmrt
-  set guifont=Menlo:h12
-
-  if has('gui_gnome')
-    set guifont=Monospace\ Bold\ 12
-  endif
-
-  if has('gui_win32') || has('gui_win32s')
-    set guifont=Consolas:h12
-    set enc=utf-8
-  endif
-elseif has('nvim')
-  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-else
-  if $COLORTERM == 'gnome-terminal'
-    set term=gnome-256color
-    colorscheme palenight
-  else
-    if $TERM == 'xterm'
-      set term=xterm-256color
-      colorscheme palenight
-    else
-      colorscheme default
-    endif
-  endif
-endif
-
-if has('gui_running') || has('nvim')
-  set ts=2 sw=2 et
-
-  let g:material_theme_style = 'palenight'
-  let g:airline_theme = 'material'
-  colorscheme material
-
-  " Always show de signcolumn, so our buffers doesn't shift on errors
-  autocmd BufRead,BufNewFile * setlocal signcolumn=yes
-  autocmd FileType tagbar,nerdtree setlocal signcolumn=no
-endif
+colorscheme onedark
 
 " UI
 set ruler          " Ruler on
 set nu             " Line numbers on
 set nowrap         " Line wrapping off
 set laststatus=2   " Always show the statusline
-set cmdheight=2    " Make the command area two lines high
+set cmdheight=1    " Make the command area two lines high
 set encoding=utf-8
 set background=dark
 set updatetime=300
@@ -298,6 +262,7 @@ let g:EditorConfig_exec_path = '/usr/local/bin/editorconfig'
 " Ale
 let g:airline#extensions#ale#enabled = 1
 let g:ale_set_highlights = 0
+let g:ale_history_log_output = 1
 
 " Rainbow
 let g:rainbow_active = 1
@@ -308,6 +273,17 @@ let g:EasyMotion_smartcase = 1
 nmap <Leader>s <Plug>(easymotion-overwin-f2)
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
+
+" Move lines/blocks around
+execute "set <A-j>=\ej"
+execute "set <A-k>=\ek"
+
+nnoremap <A-j> :m .+1<CR>==
+nnoremap <A-k> :m .-2<CR>==
+inoremap <A-j> <Esc>:m .+1<CR>==gi
+inoremap <A-k> <Esc>:m .-2<CR>==gi
+vnoremap <A-j> :m '>+1<CR>gv=gv
+vnoremap <A-k> :m '<-2<CR>gv=gv
 
 if has('nvim')
   let g:ale_linters = {
@@ -328,5 +304,12 @@ else
   \  'haskell': ['stack-build', 'hlint', 'hdevtools'],
   \  'javascript': ['eslint', 'flow'],
   \  'ruby': ['rubocop', 'ruby'],
+  \  'haml': ['hamllint'],
   \}
+
+  let g:ale_fixers = {
+  \  'ruby': ['rubocop'],
+  \}
+
+  let g:ale_ruby_rubocop_options = '--rails'
 endif
