@@ -60,7 +60,7 @@ Plug 'nanki/treetop.vim', { 'for': 'treetop' }
 
 " JavaScript
 Plug 'pangloss/vim-javascript'
-Plug 'kchmck/vim-coffee-script', { 'for': 'coffeescript' }
+Plug 'kchmck/vim-coffee-script', { 'for': 'coffee' }
 Plug 'leshill/vim-json'
 Plug 'maxmellon/vim-jsx-pretty'
 Plug 'flowtype/vim-flow'
