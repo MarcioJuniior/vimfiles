@@ -274,10 +274,6 @@ nmap <Leader>s <Plug>(easymotion-overwin-f2)
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
 
-" Move lines/blocks around
-execute "set <A-j>=\ej"
-execute "set <A-k>=\ek"
-
 nnoremap <A-j> :m .+1<CR>==
 nnoremap <A-k> :m .-2<CR>==
 inoremap <A-j> <Esc>:m .+1<CR>==gi
@@ -289,6 +285,12 @@ if has('nvim')
   let g:ale_linters = {
   \  'javascript': ['eslint', 'flow'],
   \  'ruby': ['rubocop', 'ruby'],
+  \  'haml': ['hamllint', 'rubocop'],
+  \}
+
+  let g:ale_fixers = {
+  \  'ruby': ['rubocop'],
+  \  'javascript': ['eslint'],
   \}
 
   " Language Server
@@ -304,11 +306,12 @@ else
   \  'haskell': ['stack-build', 'hlint', 'hdevtools'],
   \  'javascript': ['eslint', 'flow'],
   \  'ruby': ['rubocop', 'ruby'],
-  \  'haml': ['hamllint'],
+  \  'haml': ['hamllint', 'rubocop'],
   \}
 
   let g:ale_fixers = {
   \  'ruby': ['rubocop'],
+  \  'javascript': ['eslint'],
   \}
 
   let g:ale_ruby_rubocop_options = '--rails'
