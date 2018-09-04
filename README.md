@@ -26,6 +26,6 @@ set pythonhome=/usr/local/Cellar/python3/3.6.4_1/Frameworks/Python.framework/Ver
 
 # Instalation
 
-1. `git clone https://github.com/reu/vimfiles ~/.vim`
+1. `git clone https://github.com/MarcioJuniior/vimfiles ~/.vim`
 2. `echo "source ~/.vim/vimrc" >> ~/.vimrc`
 3. Run Vim and type `:PlugInstall`
