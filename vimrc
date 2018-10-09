@@ -18,6 +18,7 @@ Plug 'mhinz/vim-startify'
 Plug 'airblade/vim-gitgutter'
 Plug 'easymotion/vim-easymotion'
 Plug 'joshdick/onedark.vim'
+Plug 'ap/vim-css-color'
 
 " Commands
 Plug 'scrooloose/nerdcommenter'
@@ -27,6 +28,7 @@ Plug 'tpope/vim-abolish'
 Plug 'skwp/greplace.vim'
 Plug 'gorkunov/smartpairs.vim'
 Plug 'mileszs/ack.vim'
+Plug 'drmingdrmer/vim-toggle-quickfix'
 
 " Automatic Helpers
 Plug 'Raimondi/delimitMate'
@@ -39,14 +41,12 @@ Plug 'editorconfig/editorconfig-vim'
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'wokalski/autocomplete-flow'
   Plug 'autozimu/LanguageClient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
 elseif has('python3')
   Plug 'Shougo/deoplete.nvim'
   Plug 'roxma/nvim-yarp'
   Plug 'roxma/vim-hug-neovim-rpc'
   Plug 'eagletmt/neco-ghc'
-  Plug 'wokalski/autocomplete-flow'
 endif
 
 " Language Additions
@@ -109,10 +109,14 @@ set ruler          " Ruler on
 set nu             " Line numbers on
 set nowrap         " Line wrapping off
 set laststatus=2   " Always show the statusline
-set cmdheight=1    " Make the command area two lines high
+set cmdheight=2    " Make the command area two lines high
 set encoding=utf-8
 set background=dark
 set updatetime=300
+
+" UI - nvim-gtk settings
+call rpcnotify(1, 'Gui', 'FontFeatures', 'PURS, cv17')
+call rpcnotify(1, 'Gui', 'Font', 'Iosevka Semibold 12')
 
 " Behaviors
 set autoread           " Automatically reload changes if detected
@@ -204,6 +208,22 @@ inoremap <A-k> <Esc>:m .-2<CR>==gi
 vnoremap <A-j> :m '>+1<CR>gv=gv
 vnoremap <A-k> :m '<-2<CR>gv=gv
 
+" clear highlights
+nnoremap <Space> :noh<CR>
+
+" Toggle COpen
+nmap <C-x> <Plug>window:quickfix:toggle
+
+" Select all file
+nnoremap <C-a> ggVG
+
+" BLAME MODAFOCA
+nnoremap gb :Gblame<CR>
+
+" Easy split
+nnoremap <F12> :sp<CR>
+nnoremap <F12><F12> :vsp<CR>
+
 " NERDTree
 silent! nmap <silent> <Leader>p :NERDTreeToggle<CR>
 nnoremap <silent> <C-f> :call FindInNERDTree()<CR>
@@ -274,13 +294,6 @@ nmap <Leader>s <Plug>(easymotion-overwin-f2)
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
 
-nnoremap <A-j> :m .+1<CR>==
-nnoremap <A-k> :m .-2<CR>==
-inoremap <A-j> <Esc>:m .+1<CR>==gi
-inoremap <A-k> <Esc>:m .-2<CR>==gi
-vnoremap <A-j> :m '>+1<CR>gv=gv
-vnoremap <A-k> :m '<-2<CR>gv=gv
-
 if has('nvim')
   let g:ale_linters = {
   \  'javascript': ['eslint', 'flow'],
@@ -292,6 +305,8 @@ if has('nvim')
   \  'ruby': ['rubocop'],
   \  'javascript': ['eslint'],
   \}
+
+  let g:ale_c_gcc_options = '-ansi -Wall -pedantic-errors -Werror -g -lm'
 
   " Language Server
   let g:LanguageClient_serverCommands = {
@@ -316,3 +331,19 @@ else
 
   let g:ale_ruby_rubocop_options = '--rails'
 endif
+
+" Close hidden buffers
+command! CloseHiddenBuffers call s:CloseHiddenBuffers()
+function! s:CloseHiddenBuffers()
+  let open_buffers = []
+
+  for i in range(tabpagenr('$'))
+    call extend(open_buffers, tabpagebuflist(i + 1))
+  endfor
+
+  for num in range(1, bufnr("$") + 1)
+    if buflisted(num) && index(open_buffers, num) == -1
+      exec "bdelete ".num
+    endif
+  endfor
+endfunction
